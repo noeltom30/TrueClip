@@ -1,0 +1,70 @@
+import { Button, ListView, TextEdit, Palette } from "std-widgets.slint";
+
+export struct HistoryRow { id: string, preview: string, timestamp: string }
+
+export component AppWindow inherits Window {
+    title: "TrueClip";
+    preferred-width: 640px;
+    preferred-height: 420px;
+    min-width: 480px;
+    min-height: 320px;
+    background: #f6f7f9;
+    // Keep widget contrast consistent with this starter's fixed light background.
+    init => { Palette.color-scheme = ColorScheme.light; }
+    in property <[HistoryRow]> history;
+    in property <string> selected-id;
+    in property <string> selected-text;
+    in property <string> status: "Opening history…";
+    callback select-entry(string);
+    callback copy-entry(string);
+    callback delete-entry(string);
+
+    VerticalLayout {
+        padding: 16px;
+        spacing: 12px;
+        HorizontalLayout {
+            Text { text: "TrueClip"; font-size: 24px; font-weight: 700; color: #17202e; }
+            Text { text: root.history.length + " / 200 saved"; color: #485466; horizontal-alignment: right; vertical-alignment: center; }
+        }
+        HorizontalLayout {
+            spacing: 12px;
+            Rectangle {
+                min-width: 170px; preferred-width: 230px; horizontal-stretch: 1;
+                background: #ffffff; border-color: #d9dee6; border-width: 1px; border-radius: 4px;
+                if root.history.length == 0: Text {
+                    x: 12px; width: parent.width - 24px; height: parent.height;
+                    text: "Your text history starts here.\nCopied text appears while TrueClip is open.";
+                    color: #485466; wrap: word-wrap;
+                    horizontal-alignment: center; vertical-alignment: center;
+                }
+                if root.history.length > 0: ListView {
+                    x: 1px; y: 1px; width: parent.width - 2px; height: parent.height - 2px;
+                    for row in root.history: Rectangle {
+                        height: 66px;
+                        background: row.id == root.selected-id ? #e3edff : #ffffff;
+                        accessible-role: button;
+                        accessible-label: row.preview;
+                        accessible-action-default => { root.select-entry(row.id); }
+                        VerticalLayout {
+                            padding: 10px; spacing: 4px;
+                            Text { text: row.preview; color: #17202e; overflow: elide; }
+                            Text { text: row.timestamp; color: #485466; font-size: 11px; overflow: elide; }
+                        }
+                        TouchArea { clicked => { root.select-entry(row.id); } }
+                    }
+                }
+            }
+            VerticalLayout {
+                min-width: 210px; horizontal-stretch: 2; spacing: 8px;
+                Text { text: "Saved text"; color: #17202e; font-weight: 600; }
+                TextEdit { text: root.selected-text; read-only: true; wrap: word-wrap; accessible-label: "Saved text"; }
+                HorizontalLayout {
+                    spacing: 8px;
+                    Button { text: "Copy"; enabled: root.selected-id != ""; clicked => { root.copy-entry(root.selected-id); } }
+                    Button { text: "Delete"; enabled: root.selected-id != ""; clicked => { root.delete-entry(root.selected-id); } }
+                }
+            }
+        }
+        Text { text: root.status; color: #485466; font-size: 12px; wrap: word-wrap; }
+    }
+}

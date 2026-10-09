@@ -1,0 +1,38 @@
+# Rust build output and local tooling cache
+/target/
+/.cache/
+*.rs.bk
+*.profraw
+*.profdata
+
+# Local clipboard history and SQLite sidecar/backup files
+# Match anywhere: TRUECLIP_DATA_DIR can point inside the project.
+history.sqlite3
+history.sqlite3-*
+history.sqlite3.bak
+history.sqlite3.backup
+
+# Personal learning journal
+/learning.md
+/AGENTS.md
+
+# Local environment files; keep shareable templates
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Editor temporary files and local IDE state
+/.idea/
+*.swp
+*.swo
+*~
+
+# Logs and operating-system metadata
+*.log
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Cargo.lock is intentionally tracked: TrueClip is an application.
+# Rust/Slint source and shared .vscode settings also stay trackable.
